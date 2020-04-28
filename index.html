@@ -50,10 +50,10 @@
           window.addEventListener("deviceorientation", handleOrientation, true);
         }
       }
-      var direction;
 
       function handleOrientation(event) {
         var heading = event.alpha;
+        var direction = "";
 
         if (typeof event.webkitCompassHeading !== "undefined") {
           heading = event.webkitCompassHeading;
