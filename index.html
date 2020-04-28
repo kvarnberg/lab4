@@ -59,13 +59,16 @@
           heading = event.webkitCompassHeading;
         }
 
-        if (0 <= heading <= 45 || 316 <= heading <= 359) {
+        if (
+          (heading <= 45 && heading >= 0) ||
+          (heading <= 359 && heading >= 316)
+        ) {
           direction = "north";
-        } else if (46 <= heading <= 135) {
+        } else if (heading <= 135 && heading >= 46) {
           direction = "east";
-        } else if (136 <= heading <= 225) {
+        } else if (heading <= 225 && heading >= 136) {
           direction = "south";
-        } else if (226 <= heading <= 315) {
+        } else if (heading <= 315 && heading >= 226) {
           direction = "west";
         } else {
           direction = "somewhere else";
