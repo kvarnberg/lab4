@@ -46,13 +46,11 @@
       var yellow = [];
       var green = [];
 
-      // Subscribe to the demo_tutorial channel pubnub
-
       pubnubDemo.addListener({
         message: function (message) {
           var chat_message = message.message;
           var chat_channel = message.channel;
-          // console.log(message.channel + ": " + message.message);
+
           if (chat_channel === "blue") {
             blue.push(message);
             outputMessages(blue);
@@ -87,12 +85,12 @@
         document.getElementById("chat-message").value = null;
       }
 
-      function outputMessages(array) {
+      function outputMessages(list) {
         var chat = document.getElementById("chat-window");
 
         chat.innerHTML = "";
 
-        array.map((msgs) => {
+        list.map((msgs) => {
           var node = document.createElement("div");
           node.classList.add("message");
 
@@ -126,7 +124,6 @@
       }
 
       function handleOrientation(event) {
-        console.log(event.alpha + " : " + event.beta + " : " + event.gamma);
         var heading = event.alpha;
 
         if (typeof event.webkitCompassHeading !== "undefined") {
