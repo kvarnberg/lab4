@@ -1,0 +1,13 @@
+#chat-window {
+  background-color: pink;
+  width: 350px;
+  height: 350px;
+}
+
+.message {
+  background-color: rosybrown;
+  border-radius: 5px;
+  margin: 5px;
+  float: left;
+  clear: both;
+}

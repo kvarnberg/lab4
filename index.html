@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Lab 4: device orientation</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.21.7.min.js"></script>
+    <link href="index.css" rel="stylesheet" />
+  </head>
+  <body>
+    <input id="chat-message" type="text" placeholder="write here" />
+    <select id="channel" type="select">
+      <option value="blue">blue</option>
+      <option value="red">red</option>
+      <option value="yellow">yellow</option>
+      <option value="green">green</option>
+    </select>
+    <input
+      id="publish-button"
+      type="submit"
+      value="publish"
+      onclick="sendMessage()"
+    />
+    <h3>
+      Channel:
+      <div id="channel-info"></div>
+    </h3>
+    <div id="chat-window"></div>
+
+    <input
+      type="button"
+      value="Ok to see orientation"
+      onclick="givePermission()"
+    />
+
+    <div id="heading">n/a</div>
+
+    <script type="text/javascript">
+      var pubnubDemo = new PubNub({
+        publishKey: "pub-c-2e69d698-2b19-4283-8b14-8546a5d93867",
+        subscribeKey: "sub-c-c667478a-87c8-11ea-885f-2621b2dc68c7",
+      });
+
+      var blue = [];
+      var red = [];
+      var yellow = [];
+      var green = [];
+
+      // Subscribe to the demo_tutorial channel pubnub
+
+      pubnubDemo.addListener({
+        message: function (message) {
+          var chat_message = message.message;
+          var chat_channel = message.channel;
+          // console.log(message.channel + ": " + message.message);
+          if (chat_channel === "blue") {
+            blue.push(message);
+            outputMessages(blue);
+            document.getElementById("channel-info").innerHTML = "blue";
+          } else if (chat_channel === "red") {
+            red.push(message);
+            outputMessages(red);
+            document.getElementById("channel-info").innerHTML = "red";
+          } else if (chat_channel === "yellow") {
+            yellow.push(message);
+            outputMessages(yellow);
+            document.getElementById("channel-info").innerHTML = "yellow";
+          } else if (chat_channel === "green") {
+            green.push(message);
+            outputMessages(green);
+            document.getElementById("channel-info").innerHTML = "green";
+          }
+        },
+      });
+
+      pubnubDemo.subscribe({
+        channels: ["demo_tutorial", "red", "blue", "yellow", "green"],
+      });
+
+      function sendMessage() {
+        var message = document.getElementById("chat-message").value;
+        var channel = document.getElementById("channel").value;
+        pubnubDemo.publish({
+          message: message,
+          channel: channel,
+        });
+        document.getElementById("chat-message").value = null;
+      }
+
+      function outputMessages(array) {
+        var chat = document.getElementById("chat-window");
+
+        chat.innerHTML = "";
+
+        array.map((msgs) => {
+          var node = document.createElement("div");
+          node.classList.add("message");
+
+          var text = document.createTextNode(msgs.message);
+          node.appendChild(text);
+          chat.appendChild(node);
+        });
+      }
+    </script>
+
+    <script>
+      function givePermission() {
+        // feature detect
+        console.log(typeof DeviceOrientationEvent.requestPermission);
+        if (typeof DeviceOrientationEvent.requestPermission === "function") {
+          DeviceOrientationEvent.requestPermission()
+            .then((permissionState) => {
+              if (permissionState === "granted") {
+                window.addEventListener(
+                  "deviceorientation",
+                  handleOrientation,
+                  true
+                );
+              }
+            })
+            .catch(console.error);
+        } else {
+          // handle regular non iOS 13+ devices
+          window.addEventListener("deviceorientation", handleOrientation, true);
+        }
+      }
+
+      function handleOrientation(event) {
+        console.log(event.alpha + " : " + event.beta + " : " + event.gamma);
+        document.getElementById("heading").innerHTML = "hello: " + event;
+        /*var heading = event.alpha;
+
+        if (typeof event.webkitCompassHeading !== "undefined") {
+          heading = event.webkitCompassHeading;
+        }
+
+        document.getElementById("heading").innerHTML = heading.toFixed([0]);*/
+      }
+    </script>
+  </body>
+</html>
