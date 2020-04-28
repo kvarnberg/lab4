@@ -127,14 +127,13 @@
 
       function handleOrientation(event) {
         console.log(event.alpha + " : " + event.beta + " : " + event.gamma);
-        document.getElementById("heading").innerHTML = "hello: " + event.alpha;
-        /*var heading = event.alpha;
+        var heading = event.alpha;
 
         if (typeof event.webkitCompassHeading !== "undefined") {
           heading = event.webkitCompassHeading;
         }
 
-        document.getElementById("heading").innerHTML = heading.toFixed([0]);*/
+        document.getElementById("heading").innerHTML = heading.toFixed([0]);
       }
     </script>
   </body>
