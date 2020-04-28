@@ -69,8 +69,6 @@
           direction = "south";
         } else if (heading <= 315 && heading >= 226) {
           direction = "west";
-        } else {
-          direction = "somewhere else";
         }
         document.getElementById("channel-info").innerHTML = direction;
         document.getElementById("heading").innerHTML = heading.toFixed([0]);
@@ -113,7 +111,8 @@
 
       function sendMessage() {
         var message = document.getElementById("chat-message").value;
-        var channel = document.getElementById("channel-info").value;
+        var channel = document.getElementById("channel-info").innerHTML;
+        console.log(channel);
 
         pubnubDemo.publish({
           message: message,
