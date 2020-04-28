@@ -50,9 +50,9 @@
           window.addEventListener("deviceorientation", handleOrientation, true);
         }
       }
-      var direction = "north";
 
       function handleOrientation(event) {
+        var direction = "";
         var heading = event.alpha;
         if (typeof event.webkitCompassHeading !== "undefined") {
           heading = event.webkitCompassHeading;
@@ -112,7 +112,6 @@
       function sendMessage() {
         var message = document.getElementById("chat-message").value;
         var channel = document.getElementById("channel-info").innerHTML;
-        console.log(channel);
 
         pubnubDemo.publish({
           message: message,
