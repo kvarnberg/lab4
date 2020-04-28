@@ -50,11 +50,10 @@
           window.addEventListener("deviceorientation", handleOrientation, true);
         }
       }
+      var direction = "north";
 
       function handleOrientation(event) {
         var heading = event.alpha;
-        var direction = "";
-
         if (typeof event.webkitCompassHeading !== "undefined") {
           heading = event.webkitCompassHeading;
         }
@@ -75,7 +74,6 @@
         }
         document.getElementById("channel-info").innerHTML = direction;
         document.getElementById("heading").innerHTML = heading.toFixed([0]);
-        return direction;
       }
 
       var pubnubDemo = new PubNub({
@@ -115,7 +113,7 @@
 
       function sendMessage() {
         var message = document.getElementById("chat-message").value;
-        var channel = direction;
+        var channel = document.getElementById("channel-info").value;
 
         pubnubDemo.publish({
           message: message,
