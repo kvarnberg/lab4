@@ -115,9 +115,11 @@
 
       function sendMessage() {
         var message = document.getElementById("chat-message").value;
+        var channel = direction;
+
         pubnubDemo.publish({
           message: message,
-          channel: direction,
+          channel: channel,
         });
         document.getElementById("chat-message").value = null;
       }
