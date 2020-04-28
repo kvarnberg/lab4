@@ -30,50 +30,6 @@
     <div id="heading">n/a</div>
 
     <script>
-      function givePermission() {
-        // feature detect
-        console.log(typeof DeviceOrientationEvent.requestPermission);
-        if (typeof DeviceOrientationEvent.requestPermission === "function") {
-          DeviceOrientationEvent.requestPermission()
-            .then((permissionState) => {
-              if (permissionState === "granted") {
-                window.addEventListener(
-                  "deviceorientation",
-                  handleOrientation,
-                  true
-                );
-              }
-            })
-            .catch(console.error);
-        } else {
-          // handle regular non iOS 13+ devices
-          window.addEventListener("deviceorientation", handleOrientation, true);
-        }
-      }
-
-      function handleOrientation(event) {
-        var direction = "";
-        var heading = event.alpha;
-        if (typeof event.webkitCompassHeading !== "undefined") {
-          heading = event.webkitCompassHeading;
-        }
-
-        if (
-          (heading <= 45 && heading >= 0) ||
-          (heading <= 359 && heading >= 316)
-        ) {
-          direction = "north";
-        } else if (heading <= 135 && heading >= 46) {
-          direction = "east";
-        } else if (heading <= 225 && heading >= 136) {
-          direction = "south";
-        } else if (heading <= 315 && heading >= 226) {
-          direction = "west";
-        }
-        document.getElementById("channel-info").innerHTML = direction;
-        document.getElementById("heading").innerHTML = heading.toFixed([0]);
-      }
-
       var pubnubDemo = new PubNub({
         publishKey: "pub-c-2e69d698-2b19-4283-8b14-8546a5d93867",
         subscribeKey: "sub-c-c667478a-87c8-11ea-885f-2621b2dc68c7",
@@ -91,22 +47,18 @@
 
           if (chat_channel === "north") {
             north.push(message);
-            outputMessages(north);
           } else if (chat_channel === "south") {
             south.push(message);
-            outputMessages(south);
           } else if (chat_channel === "east") {
             east.push(message);
-            outputMessages(east);
           } else if (chat_channel === "west") {
             west.push(message);
-            outputMessages(west);
           }
         },
       });
 
       pubnubDemo.subscribe({
-        channels: ["demo_tutorial", "north", "south", "east", "west"],
+        channels: ["north", "south", "east", "west"],
       });
 
       function sendMessage() {
@@ -133,6 +85,70 @@
           node.appendChild(text);
           chat.appendChild(node);
         });
+      }
+
+      function getAngle(heading) {
+        if (
+          (heading <= 45 && heading >= 0) ||
+          (heading <= 359 && heading >= 316)
+        ) {
+          return "north";
+        } else if (heading <= 135 && heading >= 46) {
+          return "east";
+        } else if (heading <= 225 && heading >= 136) {
+          return "south";
+        } else if (heading <= 315 && heading >= 226) {
+          return "west";
+        } else {
+          return "north";
+        }
+      }
+
+      function getArray(direction) {
+        if (direction === "north") {
+          return north;
+        } else if (direction === "south") {
+          return south;
+        } else if (direction === "east") {
+          return east;
+        } else if (direction === "west") {
+          return west;
+        }
+      }
+
+      function givePermission() {
+        // feature detect
+        console.log(typeof DeviceOrientationEvent.requestPermission);
+        if (typeof DeviceOrientationEvent.requestPermission === "function") {
+          DeviceOrientationEvent.requestPermission()
+            .then((permissionState) => {
+              if (permissionState === "granted") {
+                window.addEventListener(
+                  "deviceorientation",
+                  handleOrientation,
+                  true
+                );
+              }
+            })
+            .catch(console.error);
+        } else {
+          // handle regular non iOS 13+ devices
+          window.addEventListener("deviceorientation", handleOrientation, true);
+        }
+      }
+
+      function handleOrientation(event) {
+        var direction = "";
+        var array = null;
+        var heading = event.alpha;
+        if (typeof event.webkitCompassHeading !== "undefined") {
+          heading = event.webkitCompassHeading;
+        }
+        direction = getAngle(heading);
+        array = getArray(direction);
+        outputMessages(array);
+        document.getElementById("channel-info").innerHTML = direction;
+        document.getElementById("heading").innerHTML = heading.toFixed([0]);
       }
     </script>
   </body>
