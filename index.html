@@ -90,8 +90,9 @@
       pubnubDemo.addListener({
         message: function (message) {
           var chat_message = message.message;
+          var chat_channel = message.channel;
 
-          if (direction === "north") {
+          if (chat_channel === "north") {
             north.push(message);
             outputMessages(north);
           } else if (chat_channel === "south") {
