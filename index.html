@@ -9,12 +9,6 @@
   </head>
   <body>
     <input id="chat-message" type="text" placeholder="write here" />
-    <select id="channel" type="select">
-      <option value="blue">blue</option>
-      <option value="red">red</option>
-      <option value="yellow">yellow</option>
-      <option value="green">green</option>
-    </select>
     <input
       id="publish-button"
       type="submit"
@@ -34,72 +28,6 @@
     />
 
     <div id="heading">n/a</div>
-
-    <script type="text/javascript">
-      var pubnubDemo = new PubNub({
-        publishKey: "pub-c-2e69d698-2b19-4283-8b14-8546a5d93867",
-        subscribeKey: "sub-c-c667478a-87c8-11ea-885f-2621b2dc68c7",
-      });
-
-      var blue = [];
-      var red = [];
-      var yellow = [];
-      var green = [];
-
-      pubnubDemo.addListener({
-        message: function (message) {
-          var chat_message = message.message;
-          var chat_channel = message.channel;
-
-          if (chat_channel === "blue") {
-            blue.push(message);
-            outputMessages(blue);
-            document.getElementById("channel-info").innerHTML = "blue";
-          } else if (chat_channel === "red") {
-            red.push(message);
-            outputMessages(red);
-            document.getElementById("channel-info").innerHTML = "red";
-          } else if (chat_channel === "yellow") {
-            yellow.push(message);
-            outputMessages(yellow);
-            document.getElementById("channel-info").innerHTML = "yellow";
-          } else if (chat_channel === "green") {
-            green.push(message);
-            outputMessages(green);
-            document.getElementById("channel-info").innerHTML = "green";
-          }
-        },
-      });
-
-      pubnubDemo.subscribe({
-        channels: ["demo_tutorial", "red", "blue", "yellow", "green"],
-      });
-
-      function sendMessage() {
-        var message = document.getElementById("chat-message").value;
-        var channel = document.getElementById("channel").value;
-        pubnubDemo.publish({
-          message: message,
-          channel: channel,
-        });
-        document.getElementById("chat-message").value = null;
-      }
-
-      function outputMessages(list) {
-        var chat = document.getElementById("chat-window");
-
-        chat.innerHTML = "";
-
-        list.map((msgs) => {
-          var node = document.createElement("div");
-          node.classList.add("message");
-
-          var text = document.createTextNode(msgs.message);
-          node.appendChild(text);
-          chat.appendChild(node);
-        });
-      }
-    </script>
 
     <script>
       function givePermission() {
@@ -122,6 +50,7 @@
           window.addEventListener("deviceorientation", handleOrientation, true);
         }
       }
+      var direction;
 
       function handleOrientation(event) {
         var heading = event.alpha;
@@ -130,7 +59,77 @@
           heading = event.webkitCompassHeading;
         }
 
+        if (0 <= heading <= 45 || 316 <= heading <= 359) {
+          direction = "north";
+        } else if (46 <= heading <= 135) {
+          direction = "east";
+        } else if (136 <= heading <= 225) {
+          direction = "south";
+        } else if (226 <= heading <= 315) {
+          direction = "west";
+        } else {
+          direction = "somewhere else";
+        }
+        document.getElementById("channel-info").innerHTML = direction;
         document.getElementById("heading").innerHTML = heading.toFixed([0]);
+      }
+
+      var pubnubDemo = new PubNub({
+        publishKey: "pub-c-2e69d698-2b19-4283-8b14-8546a5d93867",
+        subscribeKey: "sub-c-c667478a-87c8-11ea-885f-2621b2dc68c7",
+      });
+
+      var east = [];
+      var west = [];
+      var north = [];
+      var south = [];
+
+      pubnubDemo.addListener({
+        message: function (message) {
+          var chat_message = message.message;
+
+          if (direction === "north") {
+            north.push(message);
+            outputMessages(north);
+          } else if (chat_channel === "south") {
+            south.push(message);
+            outputMessages(south);
+          } else if (chat_channel === "east") {
+            east.push(message);
+            outputMessages(east);
+          } else if (chat_channel === "west") {
+            west.push(message);
+            outputMessages(west);
+          }
+        },
+      });
+
+      pubnubDemo.subscribe({
+        channels: ["demo_tutorial", "north", "south", "east", "west"],
+      });
+
+      function sendMessage() {
+        var message = document.getElementById("chat-message").value;
+        pubnubDemo.publish({
+          message: message,
+          channel: direction,
+        });
+        document.getElementById("chat-message").value = null;
+      }
+
+      function outputMessages(list) {
+        var chat = document.getElementById("chat-window");
+
+        chat.innerHTML = "";
+
+        list.map((msgs) => {
+          var node = document.createElement("div");
+          node.classList.add("message");
+
+          var text = document.createTextNode(msgs.message);
+          node.appendChild(text);
+          chat.appendChild(node);
+        });
       }
     </script>
   </body>
